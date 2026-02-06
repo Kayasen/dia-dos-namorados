@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inna, queres ser o meu par no Dia Dos Namorados? 💘</title>
+  <style>
+    :root{
+      --bg1:#ffd1dc;
+      --bg2:#fff0f6;
+      --card:#ffffffcc;
+      --text:#2b2b2b;
+      --yes:#22c55e;
+      --no:#ef4444;
+      --shadow: 0 20px 50px rgba(0,0,0,.12);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+      color:var(--text);
+      overflow:hidden;
+      background: radial-gradient(1200px 600px at 20% 10%, #ffffffaa 0%, transparent 60%),
+                  radial-gradient(900px 500px at 80% 90%, #ffffffaa 0%, transparent 55%),
+                  linear-gradient(135deg, var(--bg1), var(--bg2));
+    }
+
+    .hearts{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.55;
+      filter: blur(.2px);
+    }
+    .heart{
+      position:absolute;
+      font-size:18px;
+      animation: floatUp linear infinite;
+      transform: translateY(110vh);
+      will-change: transform, opacity;
+      opacity:.0;
+    }
+    @keyframes floatUp{
+      0%{ transform: translateY(110vh) translateX(0) scale(.8); opacity:0; }
+      10%{ opacity:.9; }
+      100%{ transform: translateY(-20vh) translateX(var(--drift)) scale(1.2); opacity:0; }
+    }
+
+    .wrap{
+      height:100%;
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+
+    .card{
+      width:min(680px, 92vw);
+      background:var(--card);
+      backdrop-filter: blur(10px);
+      border:1px solid rgba(255,255,255,.6);
+      box-shadow:var(--shadow);
+      border-radius:28px;
+      padding:28px 22px;
+      text-align:center;
+      position:relative;
+    }
+
+    h1{
+      margin: 6px 0 10px;
+      font-size: clamp(26px, 4vw, 40px);
+      letter-spacing:-.02em;
+    }
+    p{
+      margin:0 0 18px;
+      font-size: clamp(14px, 2.4vw, 18px);
+      opacity:.9;
+    }
+
+    .gif{
+      width:min(220px, 55vw);
+      height:auto;
+      margin:10px auto 18px;
+      border-radius:18px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.10);
+      display:block;
+      background:#fff;
+    }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      align-items:center;
+      flex-wrap:wrap;
+      padding-top:6px;
+    }
+
+    button{
+      border:0;
+      padding:12px 18px;
+      border-radius:14px;
+      font-weight:700;
+      font-size:16px;
+      cursor:pointer;
+      transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+      box-shadow: 0 10px 20px rgba(0,0,0,.10);
+      user-select:none;
+    }
+    button:active{ transform: translateY(1px) scale(.99); }
+
+    #yesBtn{
+      background: linear-gradient(180deg, #34d399, var(--yes));
+      color:white;
+    }
+    #yesBtn:hover{ filter:brightness(1.02); transform: translateY(-1px); }
+
+    #noBtn{
+      background: linear-gradient(180deg, #fb7185, var(--no));
+      color:white;
+      position:relative; /* no modo normal */
+    }
+
+    .hint{
+      margin-top:14px;
+      font-size:13px;
+      opacity:.75;
+    }
+
+    /* Modal */
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      place-items:center;
+      background: rgba(0,0,0,.28);
+      padding:24px;
+    }
+    .modal.open{ display:grid; }
+
+    .modalBox{
+      width:min(560px, 92vw);
+      background: rgba(255,255,255,.92);
+      border:1px solid rgba(255,255,255,.7);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      padding:22px 18px;
+      text-align:center;
+      animation: pop .18s ease-out;
+    }
+    @keyframes pop{
+      from{ transform: scale(.96); opacity:.0; }
+      to{ transform: scale(1); opacity:1; }
+    }
+
+    .big{
+      font-size: clamp(22px, 3.6vw, 34px);
+      margin:6px 0 8px;
+      font-weight:800;
+    }
+
+    .close{
+      margin-top:12px;
+      background:#111827;
+      color:white;
+      box-shadow: 0 10px 20px rgba(0,0,0,.18);
+    }
+
+    /* Confettis simples */
+    canvas{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      display:none;
+    }
+    canvas.show{ display:block; }
+  </style>
+</head>
+<body>
+  <div class="hearts" id="hearts"></div>
+  <canvas id="confetti"></canvas>
+
+  <div class="wrap">
+    <div class="card" id="card">
+      <h1>Inna, queres ser o meu par no Dia Dos Namorados? 💘</h1>
+      <p>Prometo brownies, Twix e muita boa disposição (sem provocações 😅).</p>
+
+      <!-- Podes trocar a imagem por um gif teu (ou apagar) -->
+      <img class="gif" alt="coração fofo" src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif">
+
+      <div class="actions">
+        <button id="yesBtn">Sim 💚</button>
+        <button id="noBtn">Não ❤️‍🩹</button>
+      </div>
+
+      <div class="hint" id="hint">Dica: o “Não” está um bocado tímido hoje…</div>
+    </div>
+  </div>
+
+    <div class="modal" id="modal">
+    <div class="modalBox">
+        <div class="big">JÁ SABIAAAA 😏💘</div>
+
+        <img
+        class="modalGif"
+        src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif"
+        alt="gif engraçado"
+        style="
+            width: min(260px, 70vw);
+            border-radius: 18px;
+            margin: 12px auto;
+            display: block;
+            box-shadow: 0 12px 30px rgba(0,0,0,.15);
+        "
+        >
+
+        <p>
+        Agora já não há volta a dar…<br>
+        Brownies, Twix e um date confirmado 😌🍫
+        </p>
+
+        <button class="close" id="closeBtn">Fechar</button>
+    </div>
+    </div>
+
+  <script>
+    // ===== Hearts de fundo =====
+    const heartsWrap = document.getElementById("hearts");
+    const heartChars = ["💗","💖","💘","💝","💞","💕","❤️"];
+    const HEARTS_COUNT = 24;
+
+    function rand(min, max){ return Math.random() * (max - min) + min; }
+
+    for(let i=0;i<HEARTS_COUNT;i++){
+      const s = document.createElement("div");
+      s.className = "heart";
+      s.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
+      const left = rand(0, 100);
+      const dur = rand(6, 14);
+      const delay = rand(0, 6);
+      const size = rand(14, 28);
+      s.style.left = left + "vw";
+      s.style.fontSize = size + "px";
+      s.style.animationDuration = dur + "s";
+      s.style.animationDelay = (-delay) + "s";
+      s.style.setProperty("--drift", (rand(-18, 18)) + "vw");
+      heartsWrap.appendChild(s);
+    }
+
+    // ===== Lógica dos botões =====
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn  = document.getElementById("noBtn");
+    const card   = document.getElementById("card");
+    const hint   = document.getElementById("hint");
+    const modal  = document.getElementById("modal");
+    const closeBtn = document.getElementById("closeBtn");
+
+    let noCount = 0;
+    const phrases = [
+      "Tens a certeza? 👀",
+      "Vá lá… 😭",
+      "Última oportunidade 😳",
+      "Isso magoa 😔",
+      "Ok… mas eu volto 😈",
+      "Não consegues apanhar-me 😌"
+    ];
+
+    function moveNoButton(){
+    card.style.position = "relative";
+    noBtn.style.position = "absolute";
+    noBtn.style.zIndex = 10;
+
+    const padding = 12;
+    const cardRect = card.getBoundingClientRect();
+    const btnRect  = noBtn.getBoundingClientRect();
+
+    const maxX = cardRect.width  - btnRect.width  - padding;
+    const maxY = cardRect.height - btnRect.height - padding;
+
+    const x = Math.max(padding, Math.random() * maxX);
+    const y = Math.max(padding, Math.random() * maxY);
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top  = y + "px";
+    }
+
+
+    function resetNoButton(){
+      noBtn.style.position = "relative";
+      noBtn.style.left = "";
+      noBtn.style.top  = "";
+      noBtn.style.zIndex = "";
+    }
+
+    // No desktop: foge no hover; no mobile: foge no toque
+    function handleNoInteraction(){
+      noCount++;
+      hint.textContent = phrases[Math.min(noCount-1, phrases.length-1)];
+
+      // Aumenta ligeiramente o "Sim" com cada tentativa
+      const scale = 1 + Math.min(noCount * 0.08, 0.6);
+      yesBtn.style.transform = `scale(${scale})`;
+
+      moveNoButton();
+    }
+
+    noBtn.addEventListener("mouseenter", () => handleNoInteraction());
+    noBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      handleNoInteraction();
+    }, { passive:false });
+
+    // Se redimensionar, reposiciona para não ficar fora
+    window.addEventListener("resize", () => {
+      if(noBtn.style.position === "fixed"){
+        moveNoButton();
+      }
+    });
+
+    // ===== Confetti simples =====
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    let confettis = [];
+    let anim = null;
+
+    function resizeCanvas(){
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function launchConfetti(){
+      canvas.classList.add("show");
+      confettis = [];
+      const N = 180;
+
+      for(let i=0;i<N;i++){
+        confettis.push({
+          x: rand(0, canvas.width),
+          y: rand(-canvas.height, 0),
+          r: rand(2, 5),
+          vx: rand(-1.2, 1.2),
+          vy: rand(2.2, 5.6),
+          rot: rand(0, Math.PI*2),
+          vr: rand(-0.15, 0.15),
+          a: 1
+        });
+      }
+
+      const start = performance.now();
+      const duration = 1800;
+
+      function tick(t){
+        const dt = 1;
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+
+        // cores simples (sem “tema”)
+        const cols = ["#22c55e","#3b82f6","#f59e0b","#ef4444","#a855f7","#10b981"];
+
+        for(const c of confettis){
+          c.x += c.vx * dt;
+          c.y += c.vy * dt;
+          c.rot += c.vr * dt;
+          c.vy *= 0.999;
+          c.a = Math.max(0, 1 - (t - start) / duration);
+
+          ctx.save();
+          ctx.globalAlpha = c.a;
+          ctx.translate(c.x, c.y);
+          ctx.rotate(c.rot);
+          ctx.fillStyle = cols[Math.floor(rand(0, cols.length))];
+          ctx.fillRect(-c.r, -c.r, c.r*2.2, c.r*2.2);
+          ctx.restore();
+        }
+
+        if(t - start < duration){
+          anim = requestAnimationFrame(tick);
+        }else{
+          canvas.classList.remove("show");
+          ctx.clearRect(0,0,canvas.width,canvas.height);
+          cancelAnimationFrame(anim);
+          anim = null;
+        }
+      }
+
+      if(anim) cancelAnimationFrame(anim);
+      anim = requestAnimationFrame(tick);
+    }
+
+    // ===== Clique no Sim =====
+    yesBtn.addEventListener("click", () => {
+      resetNoButton();
+      modal.classList.add("open");
+      launchConfetti();
+    });
+
+    closeBtn.addEventListener("click", () => {
+      modal.classList.remove("open");
+    });
+
+    modal.addEventListener("click", (e) => {
+      if(e.target === modal){
+        modal.classList.remove("open");
+      }
+    });
+  </script>
+</body>
+</html>
